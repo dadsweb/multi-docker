@@ -23,7 +23,7 @@ after_success:
   - docker push dadsweb/multi-server
   - docker push dadsweb/multi-worker
 
-  deploy:
+deploy:
   provider: elasticbeanstalk
   region: 'ap-northeast-1'
   app: 'multi-docker'
