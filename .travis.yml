@@ -1,0 +1,24 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - docker build -t dadsweb/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true dadsweb/react-test npm test
+
+after_success:
+  - docker build -t dadsweb/multi-client ./client
+  - docker build -t dadsweb/multi-nginx ./nginx
+  - docker build -t dadsweb/multi-server ./server
+  - docker build -t dadsweb/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push dadsweb/multi-client
+  - docker push dadsweb/multi-nginx
+  - docker push dadsweb/multi-server
+  - docker push dadsweb/multi-worker
